@@ -6,11 +6,11 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
-
+from django.utils.text import slugify
+from datetime import datetime
 
 class Areasproy(models.Model):
-    pk = models.AutoField(primary_key=True)
-    fk_proy = models.IntegerField(blank=True, null=True)
+    pk_id = models.AutoField(primary_key=True)
     supconstsnb = models.FloatField(db_column='supConstSNB', blank=True, null=True)  # Field name made lowercase.
     supconstbnb = models.FloatField(db_column='supConstBNB', blank=True, null=True)  # Field name made lowercase.
     supdesplante = models.FloatField(db_column='supDesplante', blank=True, null=True)  # Field name made lowercase.
@@ -20,8 +20,10 @@ class Areasproy(models.Model):
     supotraslibres = models.FloatField(db_column='supOtrasLibres', blank=True, null=True)  # Field name made lowercase.
     version = models.TextField(blank=True, null=True)
     nombre = models.TextField(blank=True, null=True)
-    fk_proyecto = models.IntegerField(blank=True, null=True)
-    fk_obs = models.IntegerField(blank=True, null=True)
+    fk_proyecto = models.ForeignKey('Proyecto', models.CASCADE, db_column='fk_proyecto',
+        blank=True, null=True)
+    fk_obs = models.ForeignKey('Obs', models.CASCADE, db_column='fk_obs',
+        blank=True, null=True)
     stampcrea = models.DateTimeField(db_column='stampCrea', blank=True, null=True)  # Field name made lowercase.
     stampmod = models.DateTimeField(db_column='stampMod', blank=True, null=True)  # Field name made lowercase.
 
@@ -30,57 +32,11 @@ class Areasproy(models.Model):
         db_table = 'areasProy'
 
 
-class Equipo(models.Model):
-    pk_equipo = models.AutoField(primary_key=True)
-    fk_equipotipo = models.IntegerField(db_column='fk_equipoTipo', blank=True, null=True)  # Field name made lowercase.
-    marca = models.TextField(blank=True, null=True)
-    modelo = models.TextField(blank=True, null=True)
-    serial = models.TextField(blank=True, null=True)
-    fk_paisorigen = models.IntegerField(db_column='fk_paisOrigen', blank=True, null=True)  # Field name made lowercase.
-    fichatécnica = models.TextField(db_column='fichaTécnica', blank=True, null=True)  # Field name made lowercase.
-    url_ft = models.TextField(blank=True, null=True)  # This field type is a guess.
-    anhofabricacion = models.IntegerField(db_column='anhoFabricacion', blank=True, null=True)  # Field name made lowercase.
-    capacidad = models.FloatField(blank=True, null=True)
-    fk_unidadcapacidad = models.IntegerField(db_column='fk_unidadCapacidad', blank=True, null=True)  # Field name made lowercase.
-    potencia = models.FloatField(blank=True, null=True)
-    fk_unidadpotencia = models.IntegerField(db_column='fk_unidadPotencia', blank=True, null=True)  # Field name made lowercase.
-    consumoener = models.FloatField(db_column='consumoEner', blank=True, null=True)  # Field name made lowercase.
-    fk_unidadener = models.IntegerField(db_column='fk_unidadEner', blank=True, null=True)  # Field name made lowercase.
-    fuenteener = models.TextField(db_column='fuenteEner', blank=True, null=True)  # Field name made lowercase.
-    fk_equipopadre = models.IntegerField(db_column='fk_equipoPadre', blank=True, null=True)  # Field name made lowercase.
-    fk_obs = models.IntegerField(blank=True, null=True)
-    stamp_creacion = models.DateTimeField(blank=True, null=True)
-    stamp_mod = models.DateTimeField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'equipo'
-
-
-class Espacio(models.Model):
-    pk_espacio = models.AutoField(primary_key=True)
-    nombre = models.TextField(blank=True, null=True)
-    sup = models.FloatField(blank=True, null=True)
-    nivel = models.TextField(blank=True, null=True)
-    tipo = models.TextField(blank=True, null=True)
-    estado = models.TextField(blank=True, null=True)
-    supdesp = models.FloatField(db_column='supDesp', blank=True, null=True)  # Field name made lowercase.
-    supconst = models.FloatField(db_column='supConst', blank=True, null=True)  # Field name made lowercase.
-    alturasnb = models.FloatField(db_column='alturaSNB', blank=True, null=True)  # Field name made lowercase.
-    fk_obs = models.IntegerField(blank=True, null=True)
-    fk_proyecto = models.IntegerField(blank=True, null=True)
-    kf_espaciopadre = models.IntegerField(db_column='kf_espacioPadre', blank=True, null=True)  # Field name made lowercase.
-
-    class Meta:
-        managed = False
-        db_table = 'espacio'
-
-
 class Obs(models.Model):
-    pk = models.AutoField(primary_key=True)
+    pk_id = models.AutoField(primary_key=True)
     obs = models.TextField(blank=True, null=True)
-    stampcrea = models.DateTimeField(db_column='stampCrea', blank=True, null=True)  # Field name made lowercase.
-    stampmod = models.DateTimeField(db_column='stampMod', blank=True, null=True)  # Field name made lowercase.
+    stampcrea = models.DateTimeField(default=datetime.now, db_column='stampCrea', blank=True, null=True)  # Field name made lowercase.
+    stampmod = models.DateTimeField(auto_now_add=True, db_column='stampMod', blank=True, null=True)  # Field name made lowercase.
     fk_creador = models.IntegerField(blank=True, null=True)
     fk_modif = models.IntegerField(blank=True, null=True)
 
@@ -89,24 +45,17 @@ class Obs(models.Model):
         db_table = 'obs'
 
 
-class Predio(models.Model):
-    pk = models.AutoField(primary_key=True)
-    nombre = models.TextField(blank=True, null=True)
-    sup = models.FloatField(blank=True, null=True)
-    fk_direccion = models.IntegerField(blank=True, null=True)
-    zonificacion = models.TextField(blank=True, null=True)
-    ctacatastro = models.TextField(db_column='ctaCatastro', blank=True, null=True)  # Field name made lowercase.
-    fk_obs = models.IntegerField(blank=True, null=True)
-    fk_prediopadre = models.IntegerField(db_column='fk_predioPadre', blank=True, null=True)  # Field name made lowercase.
-
-    class Meta:
-        managed = False
-        db_table = 'predio'
-
+class TipoProyecto(models.Model):
+    pk_id = models.AutoField(primary_key=True)
+    tipo = models.TextField(max_length=35, null=False, blank=False)
+    nombrelargo = models.TextField(null=False, blank=False)
+    plazoentrega  = models.IntegerField('Plazo_días_hábiles', null=True, blank=True)
 
 class Proyecto(models.Model):
     pk_id = models.AutoField(primary_key=True)
+    slug = models.SlugField(editable=False)
     nombre = models.TextField(blank=True, null=True)
+    clave = models.TextField(max_length=35)
     tipo = models.TextField(blank=True, null=True)
     cliente = models.TextField(blank=True, null=True)
     descripcion = models.TextField(blank=True, null=True)
@@ -114,34 +63,22 @@ class Proyecto(models.Model):
     fechafin = models.DateField(db_column='fechaFin', blank=True, null=True)  # Field name made lowercase.
     estado = models.TextField(blank=True, null=True)
     avance = models.FloatField(blank=True, null=True)
-    fk_proyectopadre = models.IntegerField(db_column='fk_proyectoPadre', blank=True, null=True)  # Field name made lowercase.
+    fk_proyectopadre = models.ForeignKey('self', models.CASCADE, db_column='fk_proyectoPadre', blank=True, null=True)  # Field name made lowercase.
     fk_predio = models.IntegerField(blank=True, null=True)
     activo = models.BooleanField(blank=True, null=True)
-    stampcrea = models.DateTimeField(db_column='stampCrea', blank=True, null=True)  # Field name made lowercase.
-    stampmod = models.DateTimeField(db_column='stampMod', blank=True, null=True)  # Field name made lowercase.
+    stampcrea = models.DateTimeField(default=datetime.now, db_column='stampCrea',
+        blank=True, null=True, editable=False)  # Field name made lowercase.
+    stampmod = models.DateTimeField(auto_now_add=True, db_column='stampMod', blank=True, null=True)  # Field name made lowercase.
+
+    def __str__(self):
+        return("{0} {1}".format(self.tipo, self.clave))
+
+    def save(self, *args, **kwargs):
+        if not self.pk_id:
+            self.slug = slugify("{0}-{1}".format(self.tipo, self.clave))
+        super(Proyecto,self).save(*args, **kwargs)
+
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'proyecto'
-
-
-class Tipoequipo(models.Model):
-    tipo = models.TextField(blank=True, null=True)
-    fk_norma = models.IntegerField(blank=True, null=True)
-    fk_supertipo = models.IntegerField(blank=True, null=True)
-    pk = models.AutoField(primary_key=True)
-
-    class Meta:
-        managed = False
-        db_table = 'tipoEquipo'
-
-
-class Unidadmedicion(models.Model):
-    pk = models.AutoField(primary_key=True)
-    sistema = models.TextField(blank=True, null=True)
-    unidad = models.TextField(blank=True, null=True)
-    simbolo = models.TextField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'unidadMedicion'

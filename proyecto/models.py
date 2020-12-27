@@ -9,6 +9,7 @@ from django.db import models
 from django.utils.text import slugify
 from datetime import datetime
 
+
 class Areasproy(models.Model):
     pk_id = models.AutoField(primary_key=True)
     supconstsnb = models.FloatField(db_column='supConstSNB', blank=True, null=True)  # Field name made lowercase.
@@ -47,28 +48,33 @@ class Obs(models.Model):
 
 class TipoProyecto(models.Model):
     pk_id = models.AutoField(primary_key=True)
-    tipo = models.TextField(max_length=35, null=False, blank=False)
-    nombrelargo = models.TextField(null=False, blank=False)
+    clave = models.TextField(max_length=35, null=False, blank=False)
+    nombre = models.TextField(null=False, blank=False)
     plazoentrega  = models.IntegerField('Plazo_días_hábiles', null=True, blank=True)
+
+    def __str__(self):
+        return(self.clave)
 
 class Proyecto(models.Model):
     pk_id = models.AutoField(primary_key=True)
     slug = models.SlugField(editable=False)
     nombre = models.TextField(blank=True, null=True)
-    clave = models.TextField(max_length=35)
-    tipo = models.TextField(blank=True, null=True)
+    clave = models.TextField(default='', max_length=35)
+    fk_tipo = models.ForeignKey('TipoProyecto', models.DO_NOTHING, blank=True,
+        null=True)
     cliente = models.TextField(blank=True, null=True)
     descripcion = models.TextField(blank=True, null=True)
     fechainicio = models.DateField(db_column='fechaInicio', blank=True, null=True)  # Field name made lowercase.
     fechafin = models.DateField(db_column='fechaFin', blank=True, null=True)  # Field name made lowercase.
     estado = models.TextField(blank=True, null=True)
     avance = models.FloatField(blank=True, null=True)
-    fk_proyectopadre = models.ForeignKey('self', models.CASCADE, db_column='fk_proyectoPadre', blank=True, null=True)  # Field name made lowercase.
+    fk_proyectopadre = models.ForeignKey('self', models.CASCADE, blank=True, null=True)  # Field name made lowercase.
     fk_predio = models.IntegerField(blank=True, null=True)
     activo = models.BooleanField(blank=True, null=True)
     stampcrea = models.DateTimeField(default=datetime.now, db_column='stampCrea',
         blank=True, null=True, editable=False)  # Field name made lowercase.
     stampmod = models.DateTimeField(auto_now_add=True, db_column='stampMod', blank=True, null=True)  # Field name made lowercase.
+    miembros = models.ManyToManyField('directorio.Persona', through='Brigada')
 
     def __str__(self):
         return("{0} {1}".format(self.tipo, self.clave))
@@ -82,3 +88,11 @@ class Proyecto(models.Model):
     class Meta:
         managed = True
         db_table = 'proyecto'
+
+
+class Brigada(models.Model):
+    proyecto = models.ForeignKey('Proyecto', models.CASCADE)
+    miembro = models.ForeignKey('directorio.Persona', models.CASCADE)
+    companhia = models.ForeignKey('directorio.Companhia', models.CASCADE)
+    funcion = models.CharField(max_length=140, blank=True, null=True)
+    activo = models.BooleanField(default=True)

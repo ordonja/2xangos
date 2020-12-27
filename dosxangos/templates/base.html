@@ -1,0 +1,29 @@
+{% load static %}
+{% load i18n %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>2Xangos</title>
+
+  </head>
+  <body>
+    <nav>
+    {% if user.is_authenticated %}
+        {{ user.username }}
+        <a href="{% url 'cierre' %}">Salir</a>
+    {% else %}
+      <a href="{% url 'inicio' %}">Inicia sesión</a>*
+<!--      <a href="https://teamwork.com/launchpad/login?redirect_uri=localhost:8000&clientid=ce513863a0dac78814c23c26289a9e3259db7fe3">Registrate con TeamWorks</a> -->
+      <br>
+      <a href="{% url 'registro' %}">Regístrate</a>
+    {% endif %}
+    </nav><br>
+    {% block content %}
+
+
+    {% endblock %}
+
+  </body>
+</html>

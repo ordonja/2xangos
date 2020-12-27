@@ -14,8 +14,29 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from django.conf.urls import url
+from django.contrib.auth import views as auth_views
+from . import views
+
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('', views.index, name='home'),
+    path('bandar-log/', admin.site.urls),
+    path('registro/', views.registro, name='registro'),
+    path('inicio/', auth_views.LoginView.as_view(), name='inicio'),
+    path('cierre/', auth_views.LogoutView.as_view(), name='cierre'),
+
+    path('cambia_contraseña/', auth_views.PasswordChangeView.as_view(), name='cambia_contraseña'),
+    path('contraseña_cambiada/', auth_views.PasswordChangeDoneView.as_view(), name='contraseña_cambiada'),
+    path('restablecer_contraseña/', auth_views.PasswordResetView.as_view(), name='restablecer_contraseña'),
+    path('contraseña_restablecida/', auth_views.PasswordResetDoneView.as_view(), name='contraseña_restablecida'),
+    path('restablece/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='confirma_restablece'),
+    path('restablece_listo/', auth_views.PasswordResetCompleteView.as_view(), name='restablece_listo'),
+    path('proyectos/', include('proyecto.urls')),
+        #    path('cuentas/', include('django.contrib.auth.urls')),
+
+    #ProyectoListView.as_view(), name='lista'),
+    #path(route='<slug:nombre>', view=views.ProyectoDetailView.as_view(), name='detalle'),
+    #path(route='<slug:nombre>/update/', view=views.ProyectoUpdateView.as_view(), name='update')
 ]

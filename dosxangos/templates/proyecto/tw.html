@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class = 'container'>
+
+
+<h2> Actualiza lista de proyectos </h2>
+<br>
+<form method="GET">
+  <input type="text" placeholder="Busca..." class="text-center">
+  <button type ="submit" >Busca</button>
+</form>
+</div>
+<br><br>
+<table>
+    {% for proyecto in proyectos_todos %}
+          <tr><td>{{proyecto.pk_id}}  {{proyecto.slug}} {{proyecto.nombre}} {{proyecto.clave}}
+                  {{proyecto.fk_tipo}} {{proyecto.cliente}} {{proyecto.descripcion}}
+                  {{proyecto.fechainicio}} {{proyecto.fechafin}} {{proyecto.estado}}
+                  {{proyecto.avance}} {{proyecto.fk_proyectopadre}} {{proyecto.fk_predio}}
+                  {{proyecto.activo}} {{proyecto.stampcrea}} {{proyecto.stampmod}}
+                  {{proyectos}}
+                </td></tr>
+    {% endfor %}
+</table>
+</div>
+{% endblock %}

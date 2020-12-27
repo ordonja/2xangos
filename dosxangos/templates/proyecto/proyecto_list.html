@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2> Proyectos</h2>
+<ul>
+    {% for proyecto in object_list %}
+         <li> {{proyecto.fk_tipo.clave }} - {{proyecto.nombre}}</li>
+    {% endfor %}
+</ul>
+{% endblock %}

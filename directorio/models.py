@@ -5,7 +5,10 @@
 #   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
+
 from django.db import models
+from django.conf import settings
+from django.contrib.auth import get_user_model
 
 class Pais(models.Model):
     pk_id = models.AutoField(primary_key=True)
@@ -38,19 +41,20 @@ class Companhia(models.Model):
         managed = False
         db_table = 'companhia'
 
+
 class Persona(models.Model):
     pk_id = models.AutoField(primary_key=True)
     nombres = models.TextField(blank=True, null=True)
     apellidos = models.TextField(blank=True, null=True)
-    razonsocial = models.TextField(db_column='razonSocial', blank=True, null=True)  # Field name made lowercase.
+    razonsocial = models.TextField(db_column='razonSocial', blank=True, null=True)
     rfc = models.TextField(blank=True, null=True)
     clave = models.CharField(max_length=4, blank=True, null=True)
     fk_titulo = models.IntegerField(blank=True, null=True)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, models.SET_NULL, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'persona'
-
 
 class Direccion(models.Model):
     pk_id = models.AutoField(primary_key=True)

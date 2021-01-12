@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>{{proyecto.fk_tipo.clave }} - {{proyecto.nombre}}</h2>
+<table>
+  {% for etiqueta, valor in proyecto.lista_campos %}
+    <tr>
+      <td>{{ etiqueta }}</td>
+      <td>{{ valor }}</td>
+    {% endfor %}
+</table>
+{% endblock %}

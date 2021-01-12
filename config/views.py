@@ -24,8 +24,8 @@ def registro(request):
     context = {}
     form = UserCreationForm(request.POST or None)
     if request.method == "POST":
-        if form.is_valid():
-            xango = form.save()
+        if form.is_valid():#
+            xango = form.sav#e()
             login(request,xango)
             return render(request, 'index.html')
     context['form']=form

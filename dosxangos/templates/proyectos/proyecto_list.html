@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2> Proyectos</h2>
+<ul>
+    {% for proyecto in object_list %}
+         <li> <a href="{% url 'detalles' proyecto.slug %}"> {{proyecto.fk_tipo.clave }} - {{proyecto.nombre}}</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}

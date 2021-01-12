@@ -33,7 +33,7 @@ urlpatterns = [
     path('contraseña_restablecida/', auth_views.PasswordResetDoneView.as_view(), name='contraseña_restablecida'),
     path('restablece/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='confirma_restablece'),
     path('restablece_listo/', auth_views.PasswordResetCompleteView.as_view(), name='restablece_listo'),
-    path('proyectos/', include('proyecto.urls')),
+    path('proyectos/', include('proyectos.urls')),
         #    path('cuentas/', include('django.contrib.auth.urls')),
 
     #ProyectoListView.as_view(), name='lista'),

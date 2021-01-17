@@ -1,29 +1,67 @@
 {% load static %}
 {% load i18n %}
 {% load humanize %}
+
+
 <!DOCTYPE html>
 <html lang="es" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title>2Xangos</title>
+<head>
 
-  </head>
-  <body>
-    <nav>
-    {% if user.is_authenticated %}
-        {{ user.username }}
-        <a href="{% url 'cierre' %}">Salir</a>
-    {% else %}
-      <a href="{% url 'inicio' %}">Inicia sesión</a>*
-<!--      <a href="https://teamwork.com/launchpad/login?redirect_uri=localhost:8000&clientid=ce513863a0dac78814c23c26289a9e3259db7fe3">Registrate con TeamWorks</a> -->
-      <br>
-      <a href="{% url 'registro' %}">Regístrate</a>
-    {% endif %}
-    </nav><br>
-    {% block content %}
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title>2xangos - </title>
+  <meta name="description" content="">
+  <meta name="author" content="TT">
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="{% static 'css/normalize.css'%}">
+  <link rel="stylesheet" href="{% static 'css/skeleton.css'%}">
+    <link rel="stylesheet" href="{% static 'css/custom.css'%}">
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
+
+</head>
+<div class="container">
+
+</div>
 
 
-    {% endblock %}
+  <body class="code-snippets-visible">
+  <div class="container">
+
+      <nav class="navbar">
+        <div class="container">
+          <ul class="navbar-list">
+            {% if user.is_authenticated %}
+              <li class="navbar-item"><p class="navbar-link">{{ user.username }}</p></li>
+              <li class="navbar-item"><a class ="navbar-link" href="{% url 'cierre' %}">Salir</a></li>
+            {% else %}
+              <li class="navbar-item"><a class ="navbar-link" href="{% url 'inicio' %}">Inicia sesión</a></li>
+              <li class="navbar-item"><a class ="navbar-link" href="{% url 'registro' %}">Regístrate</a></li>
+            {% endif %}
+            </ul>
+        </div>
+      </nav>
+      <div class="navbar-spacer"></div>
+
+
+        {% block content %}
+        {% endblock %}
+
+
+  </div>
 
   </body>
 </html>

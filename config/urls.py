@@ -22,6 +22,8 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='home'),
+#    path('static/', dosxangos.static, name = static),
+
     path('bandar-log/', admin.site.urls),
     path('registro/', views.registro, name='registro'),
     path('inicio/', auth_views.LoginView.as_view(), name='inicio'),
@@ -33,7 +35,7 @@ urlpatterns = [
     path('contraseña_restablecida/', auth_views.PasswordResetDoneView.as_view(), name='contraseña_restablecida'),
     path('restablece/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='confirma_restablece'),
     path('restablece_listo/', auth_views.PasswordResetCompleteView.as_view(), name='restablece_listo'),
-    path('proyectos/', include('proyectos.urls')),
+    path('proyectos/', include('dosxangos.proyectos.urls'), name ='proyectos'),
         #    path('cuentas/', include('django.contrib.auth.urls')),
 
     #ProyectoListView.as_view(), name='lista'),

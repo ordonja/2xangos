@@ -1,12 +1,20 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>{{proyecto.fk_tipo.clave }} - {{proyecto.nombre}}</h2>
-<table>
-  {% for etiqueta, valor in proyecto.lista_campos %}
-    <tr>
-      <td>{{ etiqueta }}</td>
-      <td>{{ valor }}</td>
-    {% endfor %}
-</table>
+
+<div class="docs-section" >
+<h3 class="docs-header"> {{proyecto.fk_tipo.clave }} - {{proyecto.nombre}}</h3>
+    <div class="row">
+       <div class="six columns">
+         <table>
+           {% for etiqueta, valor in proyecto.lista_campos %}
+             <tr>
+               <td>{{ etiqueta }}</td>
+               <td>{{ valor }}</td>
+             {% endfor %}
+         </table>
+       </div>
+
+     </div>
+  </div>
 {% endblock %}

@@ -56,7 +56,7 @@ class Proyecto(models.Model):
     fk_proyecto_padre = models.ForeignKey('self', models.CASCADE, blank=True, null=True)  # Field name made lowercase.
     fk_predio = models.IntegerField(blank=True, null=True)
     activo = models.BooleanField(blank=True, null=True)
-
+    fk_obs = models.ManyToManyField(Obs, blank=True)
     miembros = models.ManyToManyField('directorio.Persona', through='Brigada')
 
     def __str__(self):
@@ -70,20 +70,23 @@ class Proyecto(models.Model):
 
     def lista_campos(self):
         return [(field.verbose_name, field.value_from_object(self))
-        for field in self.__class__._meta.fields]
-
+            for field in self.__class__._meta.fields]
 
     class Meta:
         managed = True
         db_table = 'proyectos'
 
 
+
 class Brigada(models.Model):
     proyecto = models.ForeignKey(Proyecto, models.CASCADE)
-    miembro = models.ForeignKey('directorio.Persona', models.CASCADE, default=1)
+    miembro = models.ForeignKey('directorio.Persona', on_delete=models.CASCADE, default=1)
     companhia = models.ForeignKey('directorio.Companhia', models.CASCADE, default=1)
     funcion = models.CharField(max_length=140, blank=True, null=True)
     activo = models.BooleanField(default=True)
+
+    def __str__(self):
+        return("{0} {1}".format(self.proyecto, self.miembro))
 
 
 class Areasproy(models.Model):
@@ -97,14 +100,14 @@ class Areasproy(models.Model):
     sup_otras_libres = models.FloatField(db_column='supOtrasLibres', blank=True, null=True)  # Field name made lowercase.
     version = models.TextField(blank=True, null=True)
     nombre = models.TextField(blank=True, null=True)
-    fk_proyecto = models.ForeignKey(Proyecto, models.CASCADE, db_column='fk_proyecto',
-        blank=True, null=True)
-    fk_obs = models.ForeignKey(Obs,models.CASCADE,db_column='fk_obs', blank=True, null=True)
     stamp_crea = models.DateTimeField(db_column='stampCrea', blank=True, null=True)
     stamp_mod = models.DateTimeField(db_column='stampMod', blank=True, null=True)
 
+    fk_proyecto = models.ForeignKey(Proyecto, models.CASCADE,
+        blank=True, null=True)
+    fk_obs = models.ManyToManyField(Obs,db_column='fk_obs')
+
     class Meta:
-        managed = False
         db_table = 'areasProy'
 
     def __str__(self):

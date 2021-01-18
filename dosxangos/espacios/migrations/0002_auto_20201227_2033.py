@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterModelTable(
-            name='espacio',
-            table='espacios',
+            name='Espacio',
+            table='espacio',
         ),
     ]

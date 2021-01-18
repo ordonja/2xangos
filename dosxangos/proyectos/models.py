@@ -7,14 +7,14 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 from django.utils.text import slugify
-from datetime import datetime
+from django.utils import timezone
 
 
 class Obs(models.Model):
     pk_id = models.AutoField(primary_key=True)
     obs = models.TextField(blank=True, null=True)
-    stampcrea = models.DateTimeField(default=datetime.now, db_column='stampCrea', blank=True, null=True)  # Field name made lowercase.
-    stampmod = models.DateTimeField(auto_now_add=True, db_column='stampMod', blank=True, null=True)  # Field name made lowercase.
+    stamp_crea = models.DateTimeField(default=timezone.now, db_column='stampCrea', blank=True, null=True)  # Field name made lowercase.
+    stamp_mod = models.DateTimeField(auto_now_add=True, db_column='stampMod', blank=True, null=True)  # Field name made lowercase.
     fk_creador = models.IntegerField(blank=True, null=True)
     fk_modif = models.IntegerField(blank=True, null=True)
 
@@ -39,7 +39,6 @@ class Proyecto(models.Model):
     class EtapaChoices(models.TextChoices):
         dc = '1', "DISEÑO Y CONSTRUCCION"
         op = '2', "OPERACIÓN"
-
 
     pk_id = models.AutoField(primary_key=True)
     slug = models.SlugField(editable=False)
@@ -87,28 +86,3 @@ class Brigada(models.Model):
 
     def __str__(self):
         return("{0} {1}".format(self.proyecto, self.miembro))
-
-
-class Areasproy(models.Model):
-    pk_id = models.AutoField(primary_key=True)
-    sup_const_snb = models.FloatField(db_column='supConstSNB', blank=True, null=True)  # Field name made lowercase.
-    sup_const_bnb = models.FloatField(db_column='supConstBNB', blank=True, null=True)  # Field name made lowercase.
-    sup_desplante = models.FloatField(db_column='supDesplante', blank=True, null=True)  # Field name made lowercase.
-    sup_pavimentos = models.FloatField(db_column='supPavimentos', blank=True, null=True)  # Field name made lowercase.
-    sup_verde_perm = models.FloatField(db_column='supVerdePerm', blank=True, null=True)  # Field name made lowercase.
-    sup_verde_imper = models.FloatField(db_column='supVerdeImper', blank=True, null=True)  # Field name made lowercase.
-    sup_otras_libres = models.FloatField(db_column='supOtrasLibres', blank=True, null=True)  # Field name made lowercase.
-    version = models.TextField(blank=True, null=True)
-    nombre = models.TextField(blank=True, null=True)
-    stamp_crea = models.DateTimeField(db_column='stampCrea', blank=True, null=True)
-    stamp_mod = models.DateTimeField(db_column='stampMod', blank=True, null=True)
-
-    fk_proyecto = models.ForeignKey(Proyecto, models.CASCADE,
-        blank=True, null=True)
-    fk_obs = models.ManyToManyField(Obs,db_column='fk_obs')
-
-    class Meta:
-        db_table = 'areasProy'
-
-    def __str__(self):
-        return(self.nombre)

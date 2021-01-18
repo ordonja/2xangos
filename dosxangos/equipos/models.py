@@ -9,53 +9,41 @@ from django.db import models
 
 
 class Equipo(models.Model):
-    pk_id = models.AutoField(primary_key=True)
-    fk_equipotipo = models.ForeignKey('Tipoequipo', models.DO_NOTHING, db_column='fk_equipoTipo', blank=True, null=True)  # Field name made lowercase.
+    id = models.AutoField(primary_key=True)
+    equipo_tipo = models.ForeignKey('Tipoequipo', models.DO_NOTHING, db_column='fk_equipoTipo', blank=True, null=True)  # Field name made lowercase.
     marca = models.TextField(blank=True, null=True)
     modelo = models.TextField(blank=True, null=True)
     serial = models.TextField(blank=True, null=True)
-    fk_paisorigen = models.ForeignKey('directorio.Pais', on_delete= models.SET_NULL, verbose_name="pais",
+    pais_origen = models.ForeignKey('directorio.Pais', on_delete= models.SET_NULL, verbose_name="pais",
         related_name="equipos", db_column='fk_paisOrigen', blank=True, null=True)  # Field name made lowercase.
-    fichatécnica = models.TextField(db_column='fichaTécnica', blank=True, null=True)  # Field name made lowercase.
+    ficha_tec = models.TextField( blank=True, null=True)  # Field name made lowercase.
     url_ft = models.TextField(blank=True, null=True)  # This field type is a guess.
-    anhofabricacion = models.IntegerField(db_column='anhoFabricacion', blank=True, null=True)  # Field name made lowercase.
+    anho_fabricacion = models.IntegerField(db_column='anhoFabricacion', blank=True, null=True)  # Field name made lowercase.
     capacidad = models.FloatField(blank=True, null=True)
-    fk_unidadcapacidad = models.ForeignKey('Unidadmedicion', on_delete= models.SET_NULL,
+    fk_unidad_capacidad = models.ForeignKey('Unidadmedicion', on_delete= models.SET_NULL,
         db_column='fk_unidadCapacidad', blank=True, null=True, related_name="eq_capacidad")  # Field name made lowercase.
     potencia = models.FloatField(blank=True, null=True)
-    fk_unidadpotencia = models.ForeignKey('Unidadmedicion', on_delete= models.SET_NULL,
+    fk_unidad_potencia = models.ForeignKey('Unidadmedicion', on_delete= models.SET_NULL,
         db_column='fk_unidadPotencia', blank=True, null=True, related_name="eq_potencia")  # Field name made lowercase.
-    consumoener = models.FloatField(db_column='consumoEner', blank=True, null=True)  # Field name made lowercase.
-    fk_unidadener = models.ForeignKey('Unidadmedicion', on_delete= models.SET_NULL,
+    consumo_ener = models.FloatField(db_column='consumoEner', blank=True, null=True)  # Field name made lowercase.
+    fk_unidad_ener = models.ForeignKey('Unidadmedicion', on_delete= models.SET_NULL,
         db_column='fk_unidadEner', blank=True, null=True, related_name="eq_energia")  # Field name made lowercase.
-    fuenteener = models.TextField(db_column='fuenteEner', blank=True, null=True)  # Field name made lowercase.
-    fk_equipopadre = models.ForeignKey('self', on_delete= models.SET_NULL, db_column='fk_equipoPadre', blank=True, null=True)  # Field name made lowercase.
+    fuente_ener = models.TextField(db_column='fuenteEner', blank=True, null=True)  # Field name made lowercase.
+    fk_equipo_padre = models.ForeignKey('self', on_delete= models.SET_NULL, db_column='fk_equipoPadre', blank=True, null=True)  # Field name made lowercase.
     fk_obs = models.ForeignKey('proyectos.Obs', on_delete= models.SET_NULL, db_column='fk_obs', blank=True, null=True)
-    stamp_creacion = models.DateTimeField(blank=True, null=True)
+    stamp_crea = models.DateTimeField(blank=True, null=True)
     stamp_mod = models.DateTimeField(blank=True, null=True)
 
-    class Meta:
-        managed = False
-        db_table = 'equipo'
 
-
-class Tipoequipo(models.Model):
+class TipoEquipo(models.Model):
     tipo = models.TextField(blank=True, null=True)
     fk_norma = models.IntegerField(blank=True, null=True)
     fk_supertipo = models.ForeignKey('self', on_delete= models.SET_NULL, db_column='fk_supertipo', blank=True, null=True)
-    pk_id = models.AutoField(primary_key=True)
-
-    class Meta:
-        managed = False
-        db_table = 'tipoEquipo'
+    id = models.AutoField(primary_key=True)
 
 
-class Unidadmedicion(models.Model):
-    pk_id = models.AutoField(primary_key=True)
+class UnidadMedicion(models.Model):
+    id = models.AutoField(primary_key=True)
     sistema = models.TextField(blank=True, null=True)
     unidad = models.TextField(blank=True, null=True)
     simbolo = models.TextField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'unidadMedicion'

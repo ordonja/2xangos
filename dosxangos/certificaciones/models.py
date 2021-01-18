@@ -1,14 +1,13 @@
 from django.db import models
-from datetime import datetime
+from django.utils import timezone
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 
 
 class Base(models.Model):
-
-    stamp_crea = models.DateTimeField(default=datetime.now, blank=True, null=True, editable=False)  # Field name made lowercase.
+    stamp_crea = models.DateTimeField(default=timezone.now, blank=True, null=True, editable=False)  # Field name made lowercase.
     stamp_mod = models.DateTimeField(auto_now_add=True, blank=True, null=True) # Field name made lowercase.
-
+    fk_obs = models.ManyToManyField('proyectos.Obs', blank=True)
     class Meta:
         abstract = True
 
@@ -24,8 +23,6 @@ class Criterio(Base):
     obligatorio_op = models.BooleanField(blank=True, null=True)
     puntos_op = models.IntegerField(blank=True, null=True)
 
-    fk_obs = models.ForeignKey('proyectos.Obs', on_delete=models.CASCADE, db_column='fk_obs',
-            blank=True, null=True)
     fk_rubro = models.ForeignKey('Rubro', on_delete=models.CASCADE, db_column='fk_rubro', blank=True, null=True)
     evidencias = models.ManyToManyField('EvidenciaReq', through='EvidenciaCriterio')
 
@@ -80,16 +77,13 @@ class CriterioProyecto(Base):
     puntos_obtenidos = models.IntegerField(blank=True, null=True)
     evidencias = models.ManyToManyField('EvidenciaReq', through='EvidenciaCriterioProy')
 
-#    @receiver(post_save, sender=Proyecto)
-#   def crea_lista_criterios(sender, created, instance, **kwargs):
-#    if created:
-
-
 
 class EvidenciaReq(models.Model):
     pk_id = models.AutoField(primary_key=True)
     evidencia_req = models.TextField()
-    fk_evid_padre = models.ForeignKey('self',on_delete=models.CASCADE,blank = True, null = True)
+    fk_evid_padre = models.ForeignKey('self',on_delete=models.CASCADE, blank=True,
+        null=True)
+
     def __str__(self):
         return(self.evidencia_req)
 
@@ -98,4 +92,4 @@ class EvidenciaCriterioProy(Base):
     pk_id = models.AutoField(primary_key=True)
     fk_evidencia_req = models.ForeignKey(EvidenciaReq,on_delete=models.CASCADE)
     fk_criterio = models.ForeignKey(CriterioProyecto,on_delete=models.CASCADE)
-    cumple = models.BooleanField(blank = True, null = True)
+    cumple = models.BooleanField(blank=True, null=True)

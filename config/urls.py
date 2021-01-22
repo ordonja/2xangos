@@ -35,8 +35,9 @@ urlpatterns = [
     path('contraseña_restablecida/', auth_views.PasswordResetDoneView.as_view(), name='contraseña_restablecida'),
     path('restablece/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='confirma_restablece'),
     path('restablece_listo/', auth_views.PasswordResetCompleteView.as_view(), name='restablece_listo'),
+
     path('proyectos/', include('dosxangos.proyectos.urls'), name ='proyectos'),
-        #    path('cuentas/', include('django.contrib.auth.urls')),
+    path('cert/', include('dosxangos.certificaciones.urls'), name ='certificaciones'),
 
     #ProyectoListView.as_view(), name='lista'),
     #path(route='<slug:nombre>', view=views.ProyectoDetailView.as_view(), name='detalle'),

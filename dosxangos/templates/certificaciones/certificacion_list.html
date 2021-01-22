@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="docs-section" >
+    <div class="row">
+       <div class="twelve columns">
+
+         <ul>
+           {% for certificacion in object_list %}
+           <li><a href="{% url 'detalles_cert' certificacion.slug %}"> {{certificacion }}</a></li>
+            {% endfor %}
+          </ul>
+       </div>
+
+     </div>
+</div>
+{% endblock %}

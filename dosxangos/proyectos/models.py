@@ -8,10 +8,19 @@
 from django.db import models
 from django.utils.text import slugify
 from django.utils import timezone
+from django.db.models import signals
+
+
+from dosxangos.certificaciones.models import Certificacion as ProyectoCert
+
+#crea proyecto certificacion si proyecto creado es PCES
+def crea_proyecto_cert(sender,instance,created,**kwargs):
+    if created and instance.fk_tipo.clave == "PCES 2020" or instance.fk_tipo.clave=="PCES 2008":
+            proyecto_cert = ProyectoCert.objects.create(proyecto=instance, slug=instance.slug)
 
 
 class Obs(models.Model):
-    pk_id = models.AutoField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     obs = models.TextField(blank=True, null=True)
     stamp_crea = models.DateTimeField(default=timezone.now, db_column='stampCrea', blank=True, null=True)  # Field name made lowercase.
     stamp_mod = models.DateTimeField(auto_now_add=True, db_column='stampMod', blank=True, null=True)  # Field name made lowercase.
@@ -24,10 +33,10 @@ class Obs(models.Model):
 
 
 class TipoProyecto(models.Model):
-    pk_id = models.AutoField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     clave = models.TextField(max_length=35, null=False, blank=False)
     nombre = models.TextField(null=False, blank=False)
-    plazoentrega  = models.IntegerField('Plazo_días_hábiles', null=True, blank=True)
+    plazo_entrega  = models.IntegerField('Plazo_días_hábiles', null=True, blank=True)
     fk_tipo_padre  = models.ForeignKey('self', on_delete=models.CASCADE,blank=True, null=True)
 
     def __str__(self):
@@ -40,12 +49,11 @@ class Proyecto(models.Model):
         dc = '1', "DISEÑO Y CONSTRUCCION"
         op = '2', "OPERACIÓN"
 
-    pk_id = models.AutoField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     slug = models.SlugField(editable=False)
     nombre = models.TextField(blank=True, null=True)
     clave = models.TextField(default='', max_length=35)
-    fk_tipo = models.ForeignKey(TipoProyecto, models.DO_NOTHING, blank=True,
-        null=True)
+
     cliente = models.TextField(blank=True, null=True)
     descripcion = models.TextField(blank=True, null=True)
     fecha_inicio = models.DateField(db_column='fechaInicio', blank=True, null=True)  # Field name made lowercase.
@@ -53,27 +61,34 @@ class Proyecto(models.Model):
     etapa = models.TextField(blank=True, null=True, choices=EtapaChoices.choices)
     avance = models.FloatField(blank=True, null=True)
     fk_proyecto_padre = models.ForeignKey('self', models.CASCADE, blank=True, null=True)  # Field name made lowercase.
-    fk_predio = models.IntegerField(blank=True, null=True)
     activo = models.BooleanField(blank=True, null=True)
+
+    predios = models.ManyToManyField('espacios.Predio', blank=True)
+    fk_tipo = models.ForeignKey(TipoProyecto, models.DO_NOTHING, blank=True,
+        null=True)
     fk_obs = models.ManyToManyField(Obs, blank=True)
     miembros = models.ManyToManyField('directorio.Persona', through='Brigada')
 
-    def __str__(self):
-        return("{0} {1}".format(self.fk_tipo, self.clave))
+    class Meta:
+        managed = True
+        db_table = 'proyectos'
 
-    def save(self, *args, **kwargs):
-        if not self.pk_id:
-            self.slug = slugify("{0}-{1}".format(self.fk_tipo.clave, self.clave))
-        super(Proyecto,self).save(*args, **kwargs)
-        Brigada.objects.create(proyecto=self)
+    def __str__(self):
+        return(self.slug)
 
     def lista_campos(self):
         return [(field.verbose_name, field.value_from_object(self))
             for field in self.__class__._meta.fields]
 
-    class Meta:
-        managed = True
-        db_table = 'proyectos'
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.slug = slugify("{0}-{1}".format(self.fk_tipo.clave, self.clave))
+            super(Proyecto,self).save(*args, **kwargs)
+            Brigada.objects.create(proyecto=self)
+        super(Proyecto,self).save(*args, **kwargs)
+
+signals.post_save.connect(crea_proyecto_cert, sender=Proyecto,
+    dispatch_uid='models.crea_proyecto_cert')
 
 
 

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="docs-section" >
+<h2 class="docs-header">Criterios</h2>
+    <div class="row">
+       <div class="twelve columns">
+          <h3>Obligatorios</h3>
+           <table>
+             <tr><th>Clave</th><th>Criterio</th>
+             </tr>
+               {% for criterio in crit_ob %}
+                    <tr><td> {{criterio.clave }}</td><td><a href="{% url 'detalles' criterio.pk_id %}">
+                      {{criterio.nombre}}</a>
+                      <br>
+                      <h4>Requeriimentos</h4>
+                      <ul>
+                      {% for requerimiento in criterio.requerimientos.all %}
+                      <li>{{requerimiento.req}}</li>
+                      {% endfor %}
+                      </ul><br>
+                      <h4>Evidencias</h4>
+                      <ul>
+                      {% for evidencia in criterio.evidencias.all %}
+                      <li>{{evidencia.evidencia_req}}</li>
+                      {% endfor %}
+                      </ul>
+                      <h4>Indicadores</h4>
+                      <ul>
+                      {% for indicador in criterio.indicadores.all %}
+                      <li>{{indicador.definicion}}</li>
+                      {% endfor %}
+                      </ul>
+
+                                          </td></tr>
+               {% endfor %}
+           </table>
+           <br>
+           <h3>Voluntarios</h3>
+           <table>
+             <tr><th>Clave</th><th>Criterio</th>
+             </tr>
+               {% for c in crit_vol %}
+                    <tr><td> {{c.clave}}</td><td><a href="{% url 'detalles' c.pk_id %}">{{c.nombre}}</a></td></tr>
+               {% endfor %}
+           </table>
+       </div>
+
+     </div>
+</div>
+
+{% endblock %}

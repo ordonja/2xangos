@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="docs-section" >
+<h3 class="docs-header"> {{criterioproyecto.fk_criterio }} </h3>
+    <div class="row">
+       <div class="six columns">
+         <table>
+           {% for etiqueta, valor in criterioproyecto.lista_campos %}
+             <tr>
+               <td>{{ etiqueta }}</td>
+               <td>{{ valor }}</td>
+             {% endfor %}
+         </table>
+       </div>
+
+     </div>
+  </div>
+{% endblock %}

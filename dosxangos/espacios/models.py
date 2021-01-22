@@ -29,7 +29,7 @@ class Superficie(models.Model):
         libre_req= '22', "libre_req"
         cajones_est_req = '30', "cajones_est_req"
         otra = '50', "otra"
-    pk_id = models.AutoField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     tipo = models.CharField(max_length=4,default=1,blank=True, null=True, choices=TipoChoices.choices)
     area = models.FloatField('m²',default=0.0, blank=True, null=True)
     espacio = models.ForeignKey('Espacio', models.CASCADE)
@@ -39,10 +39,10 @@ class Superficie(models.Model):
 
 
 class Espacio(Base):
-    pk_id = models.AutoField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=120, blank=True, null=True)
 
-    fk_espaciopadre = models.ForeignKey('self', models.CASCADE,
+    fk_espacio_padre = models.ForeignKey('self', models.CASCADE,
         db_column='fk_espacioPadre', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
@@ -60,19 +60,20 @@ class Espacio(Base):
             if instance.niveles_snb >0:
                 for nivel in range(1, instance.niveles_bnb + 1):
                     nombre_nivel = "-{0}".format(nivel)
-                    Espacio.objects.create(nombre=nombre_nivel,fk_espaciopadre_pk_id=instance.pk_id)
+                    Espacio.objects.create(nombre=nombre_nivel,fk_espacio_padre__pk_id=instance.pk_id)
 
 class Predio(Espacio):
-    proyecto = models.ManyToManyField('proyectos.Proyecto', blank=True)
-    cuenta_predial = models.CharField(max_length=120, blank=True, null=True)
+    cuenta_catastral = models.CharField(max_length=120, blank=True, null=True)
     direccion = models.ForeignKey('directorio.Direccion',on_delete=models.SET_NULL, blank=True, null=True)
     zonificaciones = models.ManyToManyField('Zonificacion', blank=True)
 
     def __str__(self):
-        return self.direccion
+        return str(self.direccion)
 
 
-class Zonificacion(Espacio):
+class Zonificacion(models.Model):
+    id = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=120, blank=True, null=True)
     clave = models.CharField(max_length=120, blank=True, null=True)
     ordenamiento = models.CharField(max_length=120, blank=True, null=True)
     fecha =models.CharField(max_length=120, blank=True, null=True)

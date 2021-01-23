@@ -2,6 +2,10 @@ from django.contrib import admin
 from dosxangos.certificaciones.models import *
 
 
+class MetaInline(admin.TabularInline):
+    model = Criterio.metas.through
+    extra = 1
+
 class CriterioProyectoInline(admin.TabularInline):
     model = CriterioProyecto
     extra = 1
@@ -21,9 +25,12 @@ class IndicadorProyectoInline(admin.TabularInline):
 class RubroAdmin(admin.ModelAdmin):
     model = Rubro
 
+class MetaAdmin(admin.ModelAdmin):
+    model = Meta
 
 class CriterioAdmin(admin.ModelAdmin):
     model = Criterio
+    inlines = (MetaInline,)
 
 class EvidenciaReqAdmin(admin.ModelAdmin):
     model = EvidenciaReq
@@ -40,7 +47,7 @@ class CertificacionAdmin(admin.ModelAdmin):
 
 class CriterioProyectoAdmin(admin.ModelAdmin):
     model = CriterioProyecto
-    inlines = (EvidenciaProyectoInline,)
+
     exclude=['fk_obs', ]
 
 
@@ -70,3 +77,4 @@ admin.site.register(RequerimientoProyecto, RequerimientoProyectoAdmin)
 admin.site.register(IndicadorProyecto,IndicadorProyectoAdmin)
 admin.site.register(EvidenciaReq, EvidenciaReqAdmin)
 admin.site.register(Indicador, IndicadorAdmin)
+admin.site.register(Meta, MetaAdmin)

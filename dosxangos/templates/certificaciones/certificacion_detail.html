@@ -5,39 +5,36 @@
 <h2 class="docs-header">Detalles</h2>
     <div class="row">
        <div class="twelve columns">
-          <h3>{{certificacion.proyecto}}</h3>
-          <div class="row">
+          <h3>{{certificacion.nombre}}</h3>
+          <p>{{certificacion.tipo}}</p>
+
              <div class="twelve columns">
-               <ul>
+
+               <table>
+                 <tr>
+                   <th colspan="2" rowspan="2">Criterio</th >
+                    <th rowspan="2">Participa</th>
+                    <th rowspan="2">Cumple</th>
+                    <th colspan="2" style='text-align:center'>Puntos</th></tr>
+                 <tr>
+                   <th>alcanzados</th>
+                   <th>máximos</th>
+                 </tr>
                  {% for criterio in criterios %}
-                   <li><h5>{{ criterio.fk_criterio }}</h5></li>
-                   <small>
-                   <h6>Metas</h6>
-                    <ul>
-                     {% for meta in criterio.fk_criterio.metas.all%}
-                        <li>{{meta.meta}}</li>
-                      {% endfor %}
-                    </ul>
-                    </small>
+                 <tr>
+                   <td><small>{{ criterio.fk_criterio }}</small></td>
+                  <td> <a href="{% url 'certificaciones:detalles_crit_proy' criterio.id %}">{{ criterio.nombre }}</a></td>
+                   <td>{{ criterio.participa|yesno:"✓,🚫,Quizá" }}</td>
+                   <td>{{ criterio.cumple|yesno:"✓,🚫, " }}</td>
+                   <td>{{ criterio.puntos_obtenidos|default_if_none:"0" }}</td>
+                   <td>{{criterio.puntos_max}}</td>
+                 </tr>
+                  {% endfor %}
+               </table>
 
-                    <br><h6>Evidencias requeridas</h6>
-                      <ul>
-                        {% for evidencia in criterio.evidencias.all %}
-                        <li>{{ evidencia.cumple|yesno:"✓,🚫,¿?"  }}-{{ evidencia.fk_evidencia_req }}</li>
-                        {% endfor %}
-                      </ul>
-                      <br><h6>Requerimientos</h6>
-                      <ul>
-                        {% for requerimiento in criterio.requerimientos.all %}
-                        <li>{{ requerimiento.cumple|yesno:"✓,🚫,¿?" }}-{{ requerimiento.req }}</li>
-                        {% endfor %}
-                      </ul>
-
-                   {% endfor %}
-               </ul>
              </div>
        </div>
-     </div>
+
 </div>
 
 {% endblock %}

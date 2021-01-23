@@ -7,42 +7,13 @@
        <div class="twelve columns">
           <h3>Obligatorios</h3>
            <table>
-             <tr><th>Clave</th><th>Criterio</th>
+             <tr><th>Clave</th><th>Criterio</th><th>Metas</th>
              </tr>
-               {% for criterio in crit_ob %}
-                    <tr><td> {{criterio.clave }}</td><td><a href="{% url 'detalles' criterio.pk_id %}">
-                      {{criterio.nombre}}</a>
-                      <br>
-                      <h4>Requeriimentos</h4>
-                      <ul>
-                      {% for requerimiento in criterio.requerimientos.all %}
-                      <li>{{requerimiento.req}}</li>
-                      {% endfor %}
-                      </ul><br>
-                      <h4>Evidencias</h4>
-                      <ul>
-                      {% for evidencia in criterio.evidencias.all %}
-                      <li>{{evidencia.evidencia_req}}</li>
-                      {% endfor %}
-                      </ul>
-                      <h4>Indicadores</h4>
-                      <ul>
-                      {% for indicador in criterio.indicadores.all %}
-                      <li>{{indicador.definicion}}</li>
-                      {% endfor %}
-                      </ul>
+               {% for criterio in object_list %}
 
-                                          </td></tr>
+               <tr><td> {{criterio.clave }}</td><td>{{criterio.nombre}}</td><td>{{criterio.get_metas}}</td><tr>
                {% endfor %}
-           </table>
-           <br>
-           <h3>Voluntarios</h3>
-           <table>
-             <tr><th>Clave</th><th>Criterio</th>
-             </tr>
-               {% for c in crit_vol %}
-                    <tr><td> {{c.clave}}</td><td><a href="{% url 'detalles' c.pk_id %}">{{c.nombre}}</a></td></tr>
-               {% endfor %}
+               </tr>
            </table>
        </div>
 

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="docs-section" >
+<h2 class="docs-header">Detalles</h2>
+    <div class="row">
+       <div class="twelve columns">
+          <h3>{{certificacion.proyecto}}</h3>
+          <div class="row">
+             <div class="twelve columns">
+
+                 {% for criterio in criterios %}
+                   <h4>{{ criterio.fk_criterio }}</h4>
+                   <small>
+                   <h5>Metas</h5>
+                    <ul>
+                     {% for meta in criterio.fk_criterio.metas.all%}
+                        <li>{{meta.meta}}</li>
+                      {% endfor %}
+                    </ul>
+                    </small>
+
+                    <br>
+                    <h5>Evidencias requeridas</h5>
+                      <ul>
+                        {% for evidencia in criterio.evidencias.all %}
+                        <li>{{ evidencia.cumple|yesno:"✓,🚫,¿?"  }}-{{ evidencia.fk_evidencia_req }}</li>
+                        {% endfor %}
+                      </ul>
+                      <br>
+                      <h5>Requerimientos</h5>
+                      <ul>
+                        {% for requerimiento in criterio.requerimientos.all %}
+                        <li>{{ requerimiento.cumple|yesno:"✓,🚫,¿?" }}-{{ requerimiento.req }}</li>
+                        {% endfor %}
+                      </ul>
+
+                   {% endfor %}
+             </div>
+       </div>
+     </div>
+</div>
+
+{% endblock %}

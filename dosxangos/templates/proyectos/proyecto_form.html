@@ -1,7 +1,15 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2> Nuevo proyecto</h2>
+
+{% if proyecto %}
+<br>
+<p>{{proyecto.fk_tipo}} </p>
+<h2>{{proyecto.nombre}}</h2>
+{% else %}
+<h2>Crea nuevo proyecto</h2>
+{% endif %}
+
 <form method="post">{% csrf_token %}
     {{ form.as_p}}
          <input type="submit" value="Guardar">

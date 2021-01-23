@@ -7,7 +7,11 @@
        <div class="six columns">
            <ul>
                {% for proyecto in object_list %}
-                    <li> <a href="{% url 'detalles' proyecto.slug %}"> {{proyecto.fk_tipo.clave }} - {{proyecto.nombre}}</a></li>
+               {% if proyecto.fk_tipo.id == 3 or  proyecto.fk_tipo.id == 4 %}
+                  <li> <a href="{% url 'certificaciones:detalles_cert' proyecto.slug %}"> {{proyecto.fk_tipo.clave }} - {{proyecto.nombre}}</a></li>
+                {% else %}
+                  <li> <a href="{% url 'detalles' proyecto.slug %}">{{proyecto.fk_tipo.clave }} - {{proyecto.nombre}}</a></li>
+                {% endif %}
                {% endfor %}
            </ul>
        </div>

@@ -38,12 +38,20 @@ class ProyectoDetailView(LoginRequiredMixin, DetailView):
 
 class ProyectoUpdateView(LoginRequiredMixin, UpdateView):
     model = Proyecto
+    fields = ['nombre', 'clave', 'fk_tipo', 'cliente', 'descripcion',
+        'fecha_inicio', 'fecha_fin', 'fk_proyecto_padre', 'predios', 'miembros', 'avance',
+        'etapa','activo','fk_obs']
+
+    def get_success_url(self, *args,**kwargs):
+        return reverse('detalles', kwargs={'slug':self.object.slug})
+
 
 
 class ProyectoCreateView(LoginRequiredMixin, CreateView):
     model = Proyecto
     fields = ['nombre', 'clave', 'fk_tipo', 'cliente', 'descripcion',
-    'fechainicio', 'fk_proyectopadre', 'fk_predio', 'miembros']
+        'fecha_inicio', 'fecha_fin', 'fk_proyecto_padre', 'predios', 'miembros', 'avance',
+        'etapa','activo','fk_obs']
 
     def get_success_url(self):
-        return reverse('proyectos')
+        return reverse('detalles', kwargs={'slug':self.object.slug})

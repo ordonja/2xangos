@@ -1,9 +1,15 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2> Nuevo proyecto</h2>
+
+<h2> Actualiza certificacion</h2>
 <form method="post">{% csrf_token %}
     {{ form.as_p}}
+    <h3>Criterios</h3>
+
+    {% for criterio in criterios %}
+    {{criterio.as_table}}
+    {% endfor %}
          <input type="submit" value="Guardar">
 </form>
 {% endblock %}

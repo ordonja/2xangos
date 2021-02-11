@@ -21,7 +21,7 @@ class Meta(models.Model):
     aplica_op = models.BooleanField(blank=True, null=True)
 
     def __str__(self):
-        return(self.meta)
+        return str(self.meta)
 
 
 class Rubro(models.Model):
@@ -34,7 +34,7 @@ class Rubro(models.Model):
         db_table = 'cert_rubro'
 
     def __str__(self):
-        return(self.clave)
+        return str(self.clave)
 
 
 class EvidenciaReq(models.Model):
@@ -43,8 +43,12 @@ class EvidenciaReq(models.Model):
     fk_evid_padre = models.ForeignKey('self',on_delete=models.CASCADE, blank=True,
         null=True)
 
+    class Meta:
+        ordering = ['evidencia_req']
+
+
     def __str__(self):
-        return(self.evidencia_req)
+        return str(self.evidencia_req)
 
 
 class EvidenciaCriterio(Base):
@@ -58,7 +62,7 @@ class EvidenciaCriterio(Base):
         ordering = ['fk_criterio', 'fk_evidencia_req']
 
     def __str__(self):
-        return("{0}.{1}".format(self.fk_criterio.clave, self.id))
+        return("{0}.{1} {2}".format(self.fk_criterio.clave, self.id, self.fk_evidencia_req))
 
 
 class Indicador(models.Model):
@@ -69,18 +73,23 @@ class Indicador(models.Model):
     definicion =  models.TextField(blank=True, null=True)
     unidad = models.CharField(max_length=20,blank=True, null=True)
 
+    class Meta:
+        ordering = ['clave_sedema']
+
     def __str__(self):
-        return(self.clave)
+        return str(self.clave_sedema)
 
 
 class Requerimiento(models.Model):
     id = models.AutoField(primary_key=True)
     req = models.TextField(blank=True, null=True)
-
     req_padre = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name='reqpadre')
 
     def __str__(self):
-        return(self.req)
+        return str(self.req)
+
+    class Meta:
+        ordering = ['id']
 
 
 class Criterio(Base):
@@ -109,12 +118,41 @@ class Criterio(Base):
         ordering = ['id', 'clave']
 
     def __str__(self):
-        return(self.clave)
+        return("{0}.{1}".format(self.clave, self.nombre))
+
+    def get_siguiente(self):
+        try:
+            return Criterio.objects.get(id=self.id+1)
+        except:
+            return 1
+        print(get_siguiente())
+
+    def get_anterior(self):
+        try:
+            return Criterio.objects.get(id=self.id-1)
+        except:
+            return 1
+        print(get_siguiente())
+
+    def get_objetivo(self):
+        if self.objetivo:
+            return(self.objetivo)
 
     def get_metas(self):
         if self.metas:
-            return '%s'% "\n / ".join([meta.meta for meta in self.metas.all()])
+            return([[meta.meta, meta.aplica_dc, meta.aplica_op] for meta in self.metas.all()])
 
+    def get_indicadores(self):
+        if self.indicadores:
+            return([ indicador.definicion for indicador in self.indicadores.all()])
+
+    def get_requerimientos(self):
+        if self.requerimientos:
+            return([ requerimiento.req for requerimiento in self.requerimientos.all()])
+
+    def get_evidencias(self):
+        if self.evidencias:
+            return([evidencia.fk_evidencia_req.evidencia_req for evidencia in self.evidenciacriterio_set.all().select_related('fk_evidencia_req')])
 
 class Certificacion(models.Model):
     proyecto = models.OneToOneField('proyectos.Proyecto',on_delete=models.CASCADE,primary_key=True,
@@ -123,7 +161,7 @@ class Certificacion(models.Model):
     criterios = models.ManyToManyField('Criterio', through='CriterioProyecto')
 
     def __str__(self):
-        return(self.proyecto.clave)
+        return str(self.proyecto.clave)
 
     def nombre(self):
         return(self.proyecto.nombre)
@@ -131,14 +169,28 @@ class Certificacion(models.Model):
     def tipo(self):
         return(self.proyecto.fk_tipo)
 
+    def get_criterios_obligatorios(self):
+        if self.proyecto.etapa == '1':
+            criterios_todos = CriterioProyecto.objects.filter(fk_criterio__obligatorio_dc=True, fk_proyecto=self).prefetch_related('participa', 'cumple', 'puntos_obtenidos')
+        elif self.fk_proyecto.proyecto.etapa == '2':
+            criterios_todos = CriterioProyecto.objects.filter(fk_criterio__obligatorio_op=True, fk_proyecto=self).prefetch_related('participa', 'cumple', 'puntos_obtenidos')
+        return[criterios_todos]
+
 class CriterioProyecto(Base):
+    class CumpleChoices(models.TextChoices):
+        no = '0', "No"
+        si = '1', "Sí"
+        posible = '2', "Posible"
+        imposible = '3', "Imposible"
+        desconocido = '4', "Desconocido"
+
     id = models.AutoField(primary_key=True)
-    participa = models.BooleanField(blank = True, null = True)
-    cumple = models.BooleanField(blank = True, null = True)
+    participa = models.BooleanField(default=True, blank = True, null = True)
+    cumple =  models.TextField(blank=True, null=True, choices=CumpleChoices.choices)
     puntos_obtenidos = models.IntegerField(blank=True, null=True)
 
     fk_proyecto = models.ForeignKey(Certificacion,on_delete=models.CASCADE, editable=False)
-    fk_criterio = models.ForeignKey(Criterio,on_delete=models.CASCADE, editable=False)
+    fk_criterio = models.ForeignKey(Criterio,on_delete=models.CASCADE)
 
     indicadores = models.ManyToManyField('Indicador', through='IndicadorProyecto',
         blank=True, related_name="cert_ind")
@@ -168,7 +220,7 @@ class CriterioProyecto(Base):
         else:
             return("No entiendo en que etapa está el proyecto.")
 
-    def get_obligatorio(self):
+    def get_oligatoriedad(self):
         if self.fk_proyecto.proyecto.etapa == '1':
             return(self.fk_criterio.obligatorio_dc)
         elif self.fk_proyecto.proyecto.etapa == '2':
@@ -191,14 +243,21 @@ class CriterioProyecto(Base):
 
 
 class IndicadorProyecto(Base):
+    class CumpleChoices(models.TextChoices):
+        no = '0', "No"
+        si = '1', "Sí"
+        posible = '2', "Posible"
+        imposible = '3', "Imposible"
+        desconocido = '4', "Desconocido"
+
     id = models.AutoField(primary_key=True)
     fk_criterio_proyecto = models.ForeignKey('CriterioProyecto',on_delete=models.CASCADE)
     fk_indicador = models.ForeignKey('Indicador',on_delete=models.CASCADE, blank=True, null=True)
     valor_indicador = models.FloatField(blank=True,null=True)
-    cumple = models.BooleanField(blank=True, null=True)
+    cumple =  models.TextField(blank=True, null=True, choices=CumpleChoices.choices)
 
     def __str__(self):
-        return(self.fk_indicador)
+        return str(self.fk_indicador)
 
     def get_cumplimiento(self):
         return(self.cumple)
@@ -213,16 +272,25 @@ class IndicadorProyecto(Base):
 
 
 class RequerimientoProyecto(Base):
+    class CumpleChoices(models.TextChoices):
+        no = '0', "No"
+        si = '1', "Sí"
+        posible = '2', "Posible"
+        imposible = '3', "Imposible"
+        desconocido = '4', "Desconocido"
     id = models.AutoField(primary_key=True)
     fk_criterio_proyecto = models.ForeignKey(CriterioProyecto,on_delete=models.CASCADE)
-    fk_req = models.ForeignKey(Requerimiento, on_delete=models.CASCADE, blank=True, null=True, editable=False)
-    cumple = models.BooleanField(blank=True, null=True)
+    fk_req = models.ForeignKey(Requerimiento, on_delete=models.CASCADE, blank=True, null=True)
+    cumple =  models.TextField(blank=True, null=True, choices=CumpleChoices.choices)
 
     def __str__(self):
-        return(self.fk_req)
+        return str(self.fk_req.req)
 
     def get_cumplimiento(self):
         return(self.cumple)
+
+    def get_req(self):
+        return(self.fk_req)
 
     @receiver(post_save, sender=CriterioProyecto)
     def crea_lista_requerimientos(sender, created, instance, **kwargs):
@@ -234,14 +302,21 @@ class RequerimientoProyecto(Base):
 
 
 class EvidenciaProyecto(Base):
+    class CumpleChoices(models.TextChoices):
+        no = '0', "No"
+        si = '1', "Sí"
+        posible = '2', "Posible"
+        imposible = '3', "Imposible"
+        desconocido = '4', "Desconocido"
+
     id = models.AutoField(primary_key=True)
     fk_evidencia = models.ForeignKey(EvidenciaCriterio,on_delete=models.CASCADE)
     fk_criterio = models.ForeignKey('CriterioProyecto',on_delete=models.CASCADE)
-    cumple = models.BooleanField(blank=True, null=True)
+    cumple =  models.TextField(blank=True, null=True, choices=CumpleChoices.choices)
     evidencia_presentada = models.CharField(max_length=140, null=True, blank=True)
 
     def __str__(self):
-        return(self.fk_evidencia.fk_evidencia_req.evidencia_req)
+        return str(self.fk_evidencia.fk_evidencia_req.evidencia_req)
 
     def get_cumplimiento(self):
         return(self.cumple)
@@ -251,7 +326,7 @@ class EvidenciaProyecto(Base):
         if created:
             if instance.fk_proyecto.proyecto.etapa == '1':
                 evidencias = EvidenciaCriterio.objects.filter(fk_criterio = instance.fk_criterio, aplica_dc=True)
-            if instance.fk_proyecto.proyecto.etapa == '2':
+            elif instance.fk_proyecto.proyecto.etapa == '2':
                 evidencias = EvidenciaCriterio.objects.filter(fk_criterio = instance.fk_criterio, aplica_op=True)
             for evidencia in evidencias:
                 EvidenciaProyecto.objects.create(fk_evidencia=evidencia,

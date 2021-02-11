@@ -6,6 +6,10 @@ class MetaInline(admin.TabularInline):
     model = Criterio.metas.through
     extra = 1
 
+class EvidenciaCriterioInline(admin.TabularInline):
+    model = EvidenciaCriterio
+    extra = 1
+
 class CriterioProyectoInline(admin.TabularInline):
     model = CriterioProyecto
     extra = 1
@@ -17,6 +21,8 @@ class EvidenciaProyectoInline(admin.TabularInline):
 class RequerimientoProyectoInline(admin.TabularInline):
     model = RequerimientoProyecto
     extra = 1
+
+
 
 class IndicadorProyectoInline(admin.TabularInline):
     model = IndicadorProyecto
@@ -30,7 +36,7 @@ class MetaAdmin(admin.ModelAdmin):
 
 class CriterioAdmin(admin.ModelAdmin):
     model = Criterio
-    inlines = (MetaInline,)
+    inlines = (MetaInline,EvidenciaCriterioInline,)
 
 class EvidenciaReqAdmin(admin.ModelAdmin):
     model = EvidenciaReq
@@ -63,6 +69,10 @@ class RequerimientoProyectoAdmin(admin.ModelAdmin):
     model = RequerimientoProyecto
 
 
+class RequerimientoAdmin(admin.ModelAdmin):
+    model = Requerimiento
+
+
 class IndicadorAdmin(admin.ModelAdmin):
     model = Indicador
 
@@ -74,6 +84,7 @@ admin.site.register(Certificacion,CertificacionAdmin)
 admin.site.register(CriterioProyecto,CriterioProyectoAdmin)
 admin.site.register(EvidenciaProyecto, EvidenciaProyectoAdmin)
 admin.site.register(RequerimientoProyecto, RequerimientoProyectoAdmin)
+admin.site.register(Requerimiento, RequerimientoAdmin)
 admin.site.register(IndicadorProyecto,IndicadorProyectoAdmin)
 admin.site.register(EvidenciaReq, EvidenciaReqAdmin)
 admin.site.register(Indicador, IndicadorAdmin)

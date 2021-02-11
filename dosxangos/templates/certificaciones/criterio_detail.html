@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="docs-section" >
+<h2 class="docs-header">Criterios</h2>
+    <div class="row">
+       <div class="twelve columns">
+           <table>
+               <tr><th> {{criterio.clave }} - {{criterio.nombre}}<th>
+                <a href="{% url 'certificaciones:edita_crit' criterio.id %}"><small>Editar</small></a> 
+               </tr>
+               <tr><td>
+                  Puntos DyC: {{criterio.puntos_dc}} Puntos Op: {{criterio.puntos_op}}
+               <td>
+               </tr>
+               <tr><td>
+                   Objetivo: {{criterio.get_objetivo}}<br>
+                   Requerimientos
+                   <ul>{% for requerimiento in criterio.get_requerimientos %}
+                     <li>{{requerimiento}}</li>
+                     {% endfor %}
+                   </ul>
+                 Indicadores
+                 <ul>{% for indicador in criterio.get_indicadores %}
+                   <li>{{indicador}}</li>
+                   {% endfor %}
+                 </ul>
+
+                 Metas
+                 {% for meta in criterio.get_metas %}
+                    <ul>{% for metaelemento in meta %}
+                    <li>{{metaelemento}}</li>
+                   </ul>{% endfor %}
+                   {% endfor %}
+
+                 Evidencias
+                 <ul>{% for evidencia in criterio.get_evidencias %}
+                   <li>{{evidencia}}</li>
+                   {% endfor %}
+                 </ul>
+
+  </td></tr>
+           </table>
+           <a class="button" href="{% url 'certificaciones:detalles_crit' criterio.get_siguiente.id %}">Siguiente</a>
+
+       </div>
+
+     </div>
+</div>
+
+
+{% endblock %}

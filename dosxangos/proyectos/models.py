@@ -61,7 +61,7 @@ class Proyecto(models.Model):
     etapa = models.TextField(blank=True, null=True, choices=EtapaChoices.choices)
     avance = models.FloatField(blank=True, null=True)
     fk_proyecto_padre = models.ForeignKey('self', models.CASCADE, blank=True, null=True)  # Field name made lowercase.
-    activo = models.BooleanField(blank=True, null=True)
+    activo = models.BooleanField(default=True, blank=True, null=True)
 
     predios = models.ManyToManyField('espacios.Predio', blank=True)
     fk_tipo = models.ForeignKey(TipoProyecto, models.DO_NOTHING, blank=True,

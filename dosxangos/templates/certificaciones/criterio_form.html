@@ -1,32 +1,27 @@
+
 {% extends "base.html" %}
 
 {% block content %}
 
-
-
 <h2>Actualiza criterio</h2>
 
-  {{criterioproyecto}}
 
+  {{criterioproyecto}}
 <form method="post">{% csrf_token %}
 
 <table><tr>
+
           <td>{{ form.cumple.label }}:</td>
           <td> {{ form.cumple }}
             {{ form.cumple.errors }}</td>
-          <td>{{ form.puntos_obtenidos.label }}:</td>
-          <td> {{ form.puntos_obtenidos }}
+            <td>{{ form.puntos_obtenidos.label }}:</td>
+            <td> {{ form.puntos_obtenidos }}
               {{ form.puntos_obtenidos.errors }}</td>
-
 </tr></table>
 
-
     <h3>Requerimientos</h3>
-    {% for requerimiento in formset %}
-    {% for req in requerimientos%}
-      {% ifequal req.fk_req.id requerimiento.fk_req.value %}{{req}}{% endifequal %}
-    {% endfor %}
-    {{requerimiento.cumple.lable}}{{requerimiento.cumple}}
+    {% for requerimiento in requerimientos %}
+    {{requerimiento.as_table}}
     {% endfor %}
          <input type="submit" value="Guardar">
 </form>

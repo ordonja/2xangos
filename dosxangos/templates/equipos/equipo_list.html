@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="docs-section" >
+<h3 class="docs-header"> Proyectos</h3>
+    <div class="row">
+       <div class="six columns">
+           <ul>
+               {% for proyecto in object_list %}
+               {% if proyecto.fk_tipo.id == 3 or  proyecto.fk_tipo.id == 4 %}
+                  <li> <a href="{% url 'certificaciones:detalles_cert' proyecto.slug %}"> {{proyecto.fk_tipo.clave }} - {{proyecto.nombre}}</a></li>
+                {% else %}
+                  <li> <a href="{% url 'detalles' proyecto.slug %}">{{proyecto.fk_tipo.clave }} - {{proyecto.nombre}}</a></li>
+                {% endif %}
+               {% endfor %}
+           </ul>
+       </div>
+
+     </div>
+</div>
+
+{% endblock %}

@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.dispatch import receiver
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.db.models.signals import post_save
 
 
@@ -45,7 +45,6 @@ class EvidenciaReq(models.Model):
 
     class Meta:
         ordering = ['evidencia_req']
-
 
     def __str__(self):
         return str(self.evidencia_req)
@@ -118,7 +117,10 @@ class Criterio(Base):
         ordering = ['id', 'clave']
 
     def __str__(self):
-        return("{0}.{1}".format(self.clave, self.nombre))
+        return(self.clave)
+
+    def get_nombre(self):
+        return("{0} {1}".format(self.id, self.nombre))
 
     def get_siguiente(self):
         try:
@@ -154,6 +156,7 @@ class Criterio(Base):
         if self.evidencias:
             return([evidencia.fk_evidencia_req.evidencia_req for evidencia in self.evidenciacriterio_set.all().select_related('fk_evidencia_req')])
 
+
 class Certificacion(models.Model):
     proyecto = models.OneToOneField('proyectos.Proyecto',on_delete=models.CASCADE,primary_key=True,
         limit_choices_to={'fk_tipo':3, 'fk_tipo':4}, related_name='proyecto_cert')
@@ -171,10 +174,47 @@ class Certificacion(models.Model):
 
     def get_criterios_obligatorios(self):
         if self.proyecto.etapa == '1':
-            criterios_todos = CriterioProyecto.objects.filter(fk_criterio__obligatorio_dc=True, fk_proyecto=self).prefetch_related('participa', 'cumple', 'puntos_obtenidos')
+            obligatorios = CriterioProyecto.objects.filter(
+            fk_criterio__obligatorio_dc=True, fk_proyecto=self)
         elif self.fk_proyecto.proyecto.etapa == '2':
-            criterios_todos = CriterioProyecto.objects.filter(fk_criterio__obligatorio_op=True, fk_proyecto=self).prefetch_related('participa', 'cumple', 'puntos_obtenidos')
-        return[criterios_todos]
+            obligatorios = CriterioProyecto.objects.filter(
+            fk_criterio__obligatorio_op=True, fk_proyecto=self)
+        return(obligatorios)
+
+    def get_criterios_voluntarios(self):
+        if self.proyecto.etapa == '1':
+            voluntarios = CriterioProyecto.objects.filter(fk_proyecto=self).exclude(
+            fk_criterio__obligatorio_dc=True)
+        elif self.fk_proyecto.proyecto.etapa == '2':
+            voluntarios = CriterioProyecto.objects.filter(fk_proyecto=self).exclude(
+            fk_criterio__obligatorio_op=True)
+        return(voluntarios)
+
+    def puntos_obligatorios(self):
+        criterios = self.get_criterios_obligatorios()
+        suma = criterios.aggregate(p_ob=Sum('puntos_obtenidos'))
+        return(suma['p_ob'])
+
+    def puntos_voluntarios(self):
+        criterios = self.get_criterios_voluntarios()
+        suma = criterios.aggregate(p_vol=Sum('puntos_obtenidos'))
+        return(suma['p_vol'])
+
+    def pmax_obligatorios(self):
+        if self.proyecto.etapa == '1':
+            suma = CriterioProyecto.objects.filter(fk_criterio__obligatorio_dc=True, fk_proyecto=self).aggregate(p_max=Sum('fk_criterio__puntos_dc'))
+        elif self.proyecto.etapa == '2':
+            suma = CriterioProyecto.objects.filter(fk_criterio__obligatorio_op=True, fk_proyecto=self).aggregate(p_max=Sum('fk_criterio__puntos_op'))
+        return(suma['p_max'])
+
+    def pmax_voluntarios(self):
+        if self.proyecto.etapa == '1':
+            suma = CriterioProyecto.objects.filter(fk_criterio__obligatorio_dc=False, fk_proyecto=self).aggregate(p_max=Sum('fk_criterio__puntos_dc'))
+        elif self.proyecto.etapa == '2':
+            suma = CriterioProyecto.objects.filter(fk_criterio__obligatorio_op=False, fk_proyecto=self).aggregate(p_max=Sum('fk_criterio__puntos_op'))
+        return(suma['p_max'])
+
+
 
 class CriterioProyecto(Base):
     class CumpleChoices(models.TextChoices):
@@ -202,8 +242,12 @@ class CriterioProyecto(Base):
     class Meta:
             ordering=['fk_proyecto', 'fk_criterio']
 
+    def save(self, *args, **kwargs):
+        participa = self.get_oligatoriedad
+        super(CriterioProyecto,self).save(*args, **kwargs)
+
     def __str__(self):
-        return("{0}.{1}".format(self.fk_proyecto, self.fk_criterio))
+        return("{0}" "\n" "{1}".format(self.fk_proyecto, self.fk_criterio))
 
     def campos_all(self):
         return [(field.verbose_name, field.value_from_object(self))
@@ -316,6 +360,9 @@ class EvidenciaProyecto(Base):
     evidencia_presentada = models.CharField(max_length=140, null=True, blank=True)
 
     def __str__(self):
+        return str(self.id)
+
+    def get_evidencia(self):
         return str(self.fk_evidencia.fk_evidencia_req.evidencia_req)
 
     def get_cumplimiento(self):

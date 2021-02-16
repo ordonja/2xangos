@@ -1,15 +1,19 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="docs-section" >
+
 <h2 class="docs-header">Detalles</h2>
     <div class="row">
        <div class="twelve columns">
           <h3>{{certificacion.nombre}}</h3>
           <p>{{certificacion.tipo}}</p>
 
+          <p>{{certificacion.pmax_voluntarios}}</p>
+
+
              <div class="twelve columns">
 
+               <h4>Obligatorios</h4>
                <table>
                  <tr>
                    <th colspan="2" rowspan="2">Criterio</th >
@@ -20,21 +24,56 @@
                    <th>alcanzados</th>
                    <th>máximos</th>
                  </tr>
-                 {% for criterio in criterios %}
+                 {% for criterio in obligatorios %}
                  <tr>
-                   <td><small>{{ criterio.fk_criterio }}</small></td>
-                  <td> <a href="{% url 'certificaciones:detalles_crit_proy' criterio.id %}">{{ criterio.nombre }}</a></td>
+                  <td>{{criterio.fk_criterio.clave}}</td>
+                  <td><a href="{% url 'certificaciones:detalles_crit_proy' criterio.id %}">{{ criterio.nombre }}</a></td>
+
+                  <td>{{ criterio.participa|yesno:"✓,🚫,Quizá" }}</td>
+                   <td>{{ criterio.get_cumple_display|default_if_none:"-" }}</td>
+                   <td>{{ criterio.puntos_obtenidos|default_if_none:"0" }}</td>
+                   <td>{{ criterio.puntos_max }}</td>
+                 </tr>
+                  {% endfor %}
+                  <tr>
+                    <td colspan="4">Total</td>
+                    <td>{{certificacion.puntos_obligatorios|default_if_none:"0" }}</td>
+                    <td>{{certificacion.pmax_obligatorios}}</td>
+                  </tr>
+               </table>
+
+               <h4>Voluntarios</h4>
+               <table>
+                 <tr>
+                   <th colspan="2" rowspan="2">Criterio</th >
+                    <th rowspan="2">Participa</th>
+                    <th rowspan="2">Cumple</th>
+                    <th colspan="2" style='text-align:center'>Puntos</th></tr>
+                 <tr>
+                   <th>alcanzados</th>
+                   <th>máximos</th>
+                 </tr>
+                 {% for criterio in voluntarios %}
+                 <tr>
+                   <td><small>{{ criterio.fk_criterio.clave }}</small></td>
+                  <td><a href="{% url 'certificaciones:detalles_crit_proy' criterio.id %}">{{ criterio.nombre }}</a></td>
                    <td>{{ criterio.participa|yesno:"✓,🚫,Quizá" }}</td>
-                   <td>{{ criterio.cumple|yesno:"✓,🚫, " }}</td>
+                   <td>{{ criterio.get_cumple_display|default_if_none:"-" }}</td>
                    <td>{{ criterio.puntos_obtenidos|default_if_none:"0" }}</td>
                    <td>{{criterio.puntos_max}}</td>
                  </tr>
                   {% endfor %}
+                  <tr>
+                    <td colspan="4">Total</td>
+                    <td>{{certificacion.puntos_voluntarios|default_if_none:"0" }}</td>
+                    <td>{{certificacion.pmax_voluntarios}}</td>
+                  </tr>
                </table>
 
              </div>
        </div>
 
-</div>
-
 {% endblock %}
+
+</a>
+<a href="{% url 'certificaciones:detalles_crit_proy' criterio.id %}">

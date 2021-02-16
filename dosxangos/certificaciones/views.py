@@ -2,25 +2,40 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import ListView, DetailView, UpdateView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .forms import RequerimientoFormSet, CriterioProyectoForm
+from .forms import RequerimientoFormSet, EvidenciaFormSet
 
 import requests
 
-from .models import Certificacion, Criterio, CriterioProyecto, RequerimientoProyecto, Requerimiento
-# def get_requerimientos(request):
-#     requerimientos = Requerimiento
-# def index(request):
-#     if request.user.is_authenticated():
-#         user = User.objects.get(id=request.user.id)
-#         proyectos = Proyecto.objects.all()
-#         context = {
-#         'proyectos': proyectos,
-#         'user': user
-#         }
-#         #template = 'index.html'
-#         return render(request,'index.html', context)
-#     return render(request, 'index.html', context)
+from .models import (Certificacion, Criterio, CriterioProyecto,
+RequerimientoProyecto, Requerimiento, EvidenciaProyecto, Indicador)
 
+
+class CriterioProyectoUpdateView(LoginRequiredMixin, UpdateView):
+    model = CriterioProyecto
+    fields=['puntos_obtenidos', 'cumple', 'fk_obs',]
+
+    def get_success_url(self):
+        return reverse('certificaciones:detalles_crit_proy', kwargs={'pk':self.object.id})
+
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        criterio_proyecto = CriterioProyecto.objects.get(id=self.object.id)
+        if self.request.POST:
+            requerimiento_formset = RequerimientoFormSet(self.request.POST, instance=criterio_proyecto, prefix='requerimientos')
+            evidencia_formset = EvidenciaFormSet(self.request.POST, instance=criterio_proyecto, prefix='evidencias')
+        else:
+            requerimiento_formset = RequerimientoFormSet(instance=criterio_proyecto, prefix='requerimientos')
+            evidencia_formset = EvidenciaFormSet(instance=criterio_proyecto, prefix='evidencias')
+        context['requerimiento_formset'] = requerimiento_formset
+        context['evidencia_formset'] = evidencia_formset
+
+        if evidencia_formset.is_valid() and requerimiento_formset.is_valid():
+            self.object = form.save()
+            evidencia_formset.instance = self.object
+            evidencia_formset.save()
+            requerimiento_formset.instance = self.object
+            requerimiento_formset.save()
+        return context
 
 
 class CriterioListView(LoginRequiredMixin, ListView):
@@ -38,26 +53,13 @@ class CriterioProyectoDetailView(LoginRequiredMixin, DetailView):
 
 class CertificacionDetailView(LoginRequiredMixin, DetailView):
     model=Certificacion
+
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
-        context['criterios'] = CriterioProyecto.objects.filter(fk_proyecto=self.object)
+        context['obligatorios'] = self.object.get_criterios_obligatorios()
+        context['voluntarios'] = self.object.get_criterios_voluntarios()
         return context
 
-class CertificacionObligaDetailView(LoginRequiredMixin, DetailView):
-    model=Certificacion
-    template = 'certificacion_detail.html'
-    def get_context_data(self, **kwargs):
-        context=super().get_context_data(**kwargs)
-        context['criterios']= CriterioProyecto.objects.filter(fk_criterio__obligatorio_dc=True, fk_proyecto=self.object).prefetch_related('evidencias', 'indicadores','requerimientos')
-        print(context['criterios'])
-        return context
-
-class CertificacionVoluntarioDetailView(LoginRequiredMixin, DetailView):
-    model=Certificacion
-    template = 'certificacion_detail.html'
-    def get_context_data(self, **kwargs):
-        context=super().get_context_data(**kwargs)
-        return context
 
 class CertificacionUpdateView(LoginRequiredMixin, UpdateView):
     model = Certificacion
@@ -100,41 +102,10 @@ class CertificacionListView(LoginRequiredMixin, ListView):
     model=Certificacion
 
 
-class CriterioProyectoUpdateView(LoginRequiredMixin, UpdateView):
-    model = CriterioProyecto
-    form_class = CriterioProyectoForm
-
-    def get_success_url(self):
-        return reverse('certificaciones:detalles_crit_proy', kwargs={'pk':self.object.id})
-
-    def get_context_data(self, **kwargs):
-        context=super().get_context_data(**kwargs)
-        criterio_proyecto = CriterioProyecto.objects.get(id=self.object.id)
-        context['requerimientos'] = criterio_proyecto.requerimientoproyecto_set.all().select_related('fk_req')
-        print(context['requerimientos'])
-        if self.request.POST:
-            context['formset'] = RequerimientoFormSet(self.request.POST, instance=criterio_proyecto)
-        else:
-            context['formset'] = RequerimientoFormSet(instance=criterio_proyecto)
-        return context
-
-
-    # def manage_requerimientos(self, request, criterio_proyecto_id):
-    #     criterio_proyecto = CriterioProyecto.objects.get(id=criterio_proyecto_id)
-    #     print(criterio_proyecto)
-    #     if request.method == "POST":
-    #         formset = RequerimientoFormSet(self.request.POST, instance=criterio_proyecto)
-    #     else:
-    #         formset = Form(instance=criterio_proyecto)
-    #
-    #         if formset.is_valid():
-    #             formset.save()
-    #             return reverse('certificaciones:detalles_crit_proy', kwargs={'pk':self.object.id})
-    #     else:
-    #         formset = RequerimientoFormSet(instance=criterio_proyecto)
-        # return render(request, 'criterioproyecto_form.html', {'formset':formset})
-
-
 class CriterioDetailView(LoginRequiredMixin, DetailView):
     model = Criterio
     queryset= Criterio.objects.prefetch_related('evidencias', 'metas','indicadores','requerimientos')
+
+
+class IndicadorListView(LoginRequiredMixin, ListView):
+    model = Indicador

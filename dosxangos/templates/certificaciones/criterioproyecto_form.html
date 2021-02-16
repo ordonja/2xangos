@@ -2,32 +2,52 @@
 
 {% block content %}
 
-
-
-<h2>Actualiza criterio</h2>
-
-  {{criterioproyecto}}
-
+<div >
+<h5>Actualiza criterio</h5>
 <form method="post">{% csrf_token %}
+<h5 class="docs-header"> {{form.instance.fk_proyecto}}</h5>
+<h3 class="docs-header">{{form.instance.fk_criterio}}</h3>
+<p>{{form.instance.puntos_max}}<p>
+    <table>
+    {{form.as_table}}
+    </table>
 
-<table><tr>
-          <td>{{ form.cumple.label }}:</td>
-          <td> {{ form.cumple }}
-            {{ form.cumple.errors }}</td>
-          <td>{{ form.puntos_obtenidos.label }}:</td>
-          <td> {{ form.puntos_obtenidos }}
-              {{ form.puntos_obtenidos.errors }}</td>
+    {{ evidencia_formset.management_form }}
+    <h6>Evidencia requerida</h6>
 
-</tr></table>
-
-
-    <h3>Requerimientos</h3>
-    {% for requerimiento in formset %}
-    {% for req in requerimientos%}
-      {% ifequal req.fk_req.id requerimiento.fk_req.value %}{{req}}{% endifequal %}
+    {% for evidencia in evidencia_formset %}
+    {{evidencia.instance.fk_evidencia}}
+    {{evidencia.instance.id}}
+    <table>
+      {{evidencia.as_table}}
+    </table>
+    <br>
     {% endfor %}
-    {{requerimiento.cumple.lable}}{{requerimiento.cumple}}
+
+      {{ requerimiento_formset.management_form }}
+
+    <h6>Requerimientos</h6>
+
+    {% for requerimiento in requerimiento_formset %}
+      {{requerimiento.instance.fk_req}}
+      <table>
+        {{requerimiento.as_table}}
+      </table>
     {% endfor %}
+
          <input type="submit" value="Guardar">
 </form>
+</div>
 {% endblock %}
+
+
+<h6>Evidencia requerida</h6>
+
+{% for evidencia in evidencia_formset %}
+{{evidencia.instance.fk_evidencia}}
+{{evidencia.instance.id}}
+<table>
+  {{evidencia.as_table}}
+</table>
+<br>
+{% endfor %}

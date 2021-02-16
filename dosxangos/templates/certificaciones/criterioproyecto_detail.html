@@ -4,13 +4,13 @@
 
 <div class="docs-section" >
 <h5 class="docs-header"> <a href="{% url 'certificaciones:detalles_cert' criterioproyecto.fk_proyecto.slug %}">{{criterioproyecto.fk_proyecto }}</a> </h5>
-<h3 class="docs-header"> {{criterioproyecto.fk_criterio }} - {{criterioproyecto.fk_criterio.nombre }} </h3>
+<h3 class="docs-header"> {{criterioproyecto.fk_criterio }} </h3>
 <a href="{% url 'certificaciones:edita_crit_proy' criterioproyecto.id %}">Editar</a>
 
     <div class="row">
        <div class="twelve columns">
          <table>
-           <tr><td><label>Cumple:</label>{{ criterioproyecto.cumple }}</td>
+           <tr><td><label>Cumple:</label>{{ criterioproyecto.get_cumple_display }}</td>
               <td><label>Puntos obtenidos:</label>{{ criterioproyecto.puntos_obtenidos|default_if_none:"0" }}</td>
               <td><label>Puntos máximos</label>{{criterioproyecto.puntos_max }}</td>
            <small>
@@ -21,7 +21,7 @@
             </thead>
             <tbody>
               {% for meta in criterioproyecto.fk_criterio.metas.all %}
-              <tr><td>{{meta.cumple}}</td>
+              <tr><td>{{meta.get_cumple_display}}</td>
                 <td>
                 {{meta.meta}}
                 </td>
@@ -36,7 +36,7 @@
             </thead>
             <tbody>
               {% for requerimiento in criterioproyecto.requerimientos.all  %}
-              <tr><td>{{criterioproyecto.cumple}}</td>
+              <tr><td>{{criterioproyecto.get_cumple_display}}</td>
                 <td>
                 {{requerimiento}}
                 </td>
@@ -52,9 +52,9 @@
             <tbody>
               <tr><th><label>Cumple</label></th><th>Requerida</th><th>Presentada</th></tr>
               {% for evidencia in criterioproyecto.evidenciaproyecto_set.all  %}
-              <tr><td>{{evidencia.cumple|yesno:"✓,🚫,¿?"}}</td>
+              <tr><td>{{evidencia.get_cumple_display}}</td>
                 <td>
-                {{evidencia}}
+                {{evidencia.get_evidencia}}
                 </td>
                 <td>{{evidencia.evidencia_presentada|default_if_none:"Ninguna"}}</td>
               </tr>

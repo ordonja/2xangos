@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="docs-section" >
+    <div class="row">
+       <div class="twelve columns">
+       <table>
+         <tr>
+           <th>ID</th>
+           <th>Clave SEDEMA</th>
+           <th>Clave</th>
+           <th>Valor requerido</th>
+          <th>definicion</th>
+          <th>unidad</th>
+       </tr>
+           {% for indicador in object_list %}
+           <tr>
+          <td>{{indicador.id}}</td>
+          <td>{{indicador.clave_sedema}}</td>
+          <td>{{indicador.clave}}</td>
+          <td>{{indicador.valor_requerido}}</td>
+          <td>{{indicador.definicion}}</td>
+          <td>{{indicador.unidad}}</td>
+           </tr>
+          {% endfor %}
+            </table>
+
+          </div>
+    </div>
+</div>
+{% endblock %}

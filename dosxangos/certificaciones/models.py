@@ -170,7 +170,7 @@ class Certificacion(models.Model):
         return(self.proyecto.nombre)
 
     def tipo(self):
-        return(self.proyecto.fk_tipo)
+        return("{0} — {1}".format(self.proyecto.fk_tipo, self.proyecto.get_etapa_display()))
 
     def get_criterios_obligatorios(self):
         if self.proyecto.etapa == '1':

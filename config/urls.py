@@ -38,7 +38,7 @@ urlpatterns = [
 
     path('proyectos/', include('dosxangos.proyectos.urls'), name ='proyectos'),
     path('cert/', include('dosxangos.certificaciones.urls'), name ='certificaciones'),
-
+    path('equipos/', include('dosxangos.equipos.urls'), name ='equipos'),
     #ProyectoListView.as_view(), name='lista'),
     #path(route='<slug:nombre>', view=views.ProyectoDetailView.as_view(), name='detalle'),
     #path(route='<slug:nombre>/update/', view=views.ProyectoUpdateView.as_view(), name='update')

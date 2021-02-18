@@ -13,7 +13,4 @@ urlpatterns = [
     path('criterio/<int:pk>/actualiza', views.CriterioProyectoUpdateView.as_view(), name='edita_crit_proy'),
     path('<slug:slug>/', views.CertificacionDetailView.as_view(), name='detalles_cert'),
     path('<slug:slug>/actualiza', views.CertificacionUpdateView.as_view(), name='edita_cert'),
-
-#    path('<slug:slug>/o/actualiza', views.CertificacionObligaUpdateView.as_view(), name='edita_cert_obliga'),
-#    path('<slug:slug>/v/actualiza', views.CertificacionVoluntarioUpdateView.as_view(), name='edita_cert_vol'),
 ]

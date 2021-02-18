@@ -50,8 +50,7 @@ class Companhia(models.Model):
         db_table = 'companhia'
 
     def __str__(self):
-        if self.nombre:
-            return(self.nombre)
+        return(self.nombre)
 
 
 class Persona(models.Model):
@@ -91,4 +90,4 @@ class Direccion(models.Model):
         db_table = 'direccion'
 
     def __str__(self):
-            return("{0} {1}".format(self.calle, self.numero))
+        return("{0} {1}".format(self.calle, self.numero))

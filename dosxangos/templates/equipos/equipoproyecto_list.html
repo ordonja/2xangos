@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="docs-section" >
+
+  <div class="docs-section" >
+  <h5 class="docs-header"> {{equipo.fk_proyecto}} </h5>
+
+<h3 class="docs-header"> Equipos</h3>
+    <div class="row">
+       <div class="six columns">
+           <ul>
+               {% for equipo in object_list %}
+                  <li> {{ equipo.id }}
+                    {{ equipo.fk_equipo.equipo_tipo }}
+                    {{ equipo.fk_equipo.marca }}
+                    {{ equipo.fk_equipo.modelo }}
+
+               {% endfor %}
+           </ul>
+       </div>
+
+     </div>
+</div>
+
+{% endblock %}

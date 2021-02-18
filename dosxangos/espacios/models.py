@@ -49,7 +49,7 @@ class Espacio(Base):
         db_table = 'espacios'
 
     def __str__(self):
-        return self.nombre
+        return str(self.nombre)
 
     @receiver(post_save, sender='espacios.Edificio')
     def crea_pisos(sender, created, instance, **kwargs):
@@ -68,7 +68,7 @@ class Predio(Espacio):
     zonificaciones = models.ManyToManyField('Zonificacion', blank=True)
 
     def __str__(self):
-        return str(self.direccion)
+        return(self.direccion)
 
 
 class Zonificacion(models.Model):

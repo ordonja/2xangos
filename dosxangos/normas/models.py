@@ -75,17 +75,17 @@ class Norma(Base):
     clave = models.CharField(max_length=140, blank=True, null=True)
     nombre = models.CharField(max_length=280, blank=True, null=True)
     descripcion  = models.TextField(blank=True, null=True)
-    secciones = models.ManyToManyField('Seccion')
+    secciones = models.ManyToManyField('Seccion', blank=True)
 
     def save(self, *args, **kwargs):
-        if not self.pk_id and self.tipo < 10:
+        if not self.id and self.tipo < 10:
             if not self.rubro:
                 self.clave = ("{0}-{1}-{3}-{4}".format(self.tipo, self.numero,
                     self.emisor_ambito, self.anho))
             else:
                 self.clave = ("{0}-{1}-{3}-{4}-{5}".format(self.tipo, self.rubro,self.numero,
                     self.emisor_ambito, self.anho))
-        super(Proyecto,self).save(*args, **kwargs)
+        super(Norma, self).save(*args, **kwargs)
 
 
     def __str__(self):

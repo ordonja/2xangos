@@ -6,8 +6,8 @@ from .forms import RequerimientoFormSet, EvidenciaFormSet
 
 import requests
 
-from .models import (Certificacion, Criterio, CriterioProyecto,
-RequerimientoProyecto, Requerimiento, EvidenciaProyecto, Indicador)
+from .models import (Certificacion, Criterio, CriterioProyecto, RequerimientoProyecto,
+Requerimiento, EvidenciaProyecto, Indicador)
 
 
 class CriterioProyectoUpdateView(LoginRequiredMixin, UpdateView):

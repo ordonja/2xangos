@@ -110,7 +110,7 @@ class EquipoProyecto(Base):
     id = models.AutoField(primary_key=True)
     serial = models.TextField(blank=True, null=True)
     cantidad = models.FloatField(blank=True,null=True)
-
+    sistema = models.CharField(max_length=70, null=True, blank=True)
     equipo = models.ForeignKey('Equipo', on_delete=models.CASCADE)
     proyecto = models.ForeignKey('proyectos.Proyecto',
     on_delete=models.CASCADE, related_name='equipo_proy')
@@ -171,3 +171,8 @@ class MotorElectrico(Equipo):
     def __str__(self):
         return("{0} {1} {2}".format(
         self.equipo.equipo_tipo, self.equipo.marca, self.equipo.modelo))
+
+    def save(self, *args, **kwargs):
+        if not self.id and self.rpm and self.frecuencia:
+            self.poles = round((self.frecuencia*2*60)/self.rpm,0)
+        super(MotorElectrico,self).save(*args, **kwargs)

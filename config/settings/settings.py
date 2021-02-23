@@ -25,7 +25,7 @@ SECRET_KEY = '-+%4pjf$&=@g%8u6hsr_lh01gi^#z2axofqhxctlj3gq7d-ju%'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['3.132.33.254', 'www.2xangos.com']
+ALLOWED_HOSTS = ['3.15.181.192 ', 'www.2xangos.com']
 
 
 # Application definition

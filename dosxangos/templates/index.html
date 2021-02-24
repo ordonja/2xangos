@@ -4,11 +4,23 @@
 {% block content %}
 
   <div class="container">
+
         <h3 class="docs-header">Hola</h3>
+
+        <br>
+        <img src="https://web.whatsapp.com/pp?t=l&u=5215530133625%40c.us&i=1612827748&n=pHvgISsgaEQiAeZEtxF80wfvKjpqzNYZ2Oyj4LpRgfw%3D" alt="Ya pude doctora!">
+
         <p>Bienvenida</p>
+
+        <p>¡Por fin pude doctora!</p>
+        <p><small><i>No se preocupe, ahorita la quito de aquí.</i></small></p>
 
         {% if user.is_authenticated %}
         <a class="button" href="{% url 'proyectos' %}">Tus proyectos</a>
+
+
+
+
         {% endif %}
   </div>
 

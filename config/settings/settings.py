@@ -134,11 +134,6 @@ MEDIA_ROOT = BASE_DIR / 'dosxangos/media'
 
 STATIC_ROOT =  BASE_DIR / 'dosxangos/static'
 
-#STATICFILES_DIRS = [BASE_DIR / 'dosxangos/static',]
-
-SESSION_COOKIE_SECURE = True
-
-CSRF_COOKIE_SECURE = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/

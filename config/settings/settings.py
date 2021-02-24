@@ -25,7 +25,7 @@ SECRET_KEY = '-+%4pjf$&=@g%8u6hsr_lh01gi^#z2axofqhxctlj3gq7d-ju%'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['3.15.181.192 ', 'www.2xangos.com']
+ALLOWED_HOSTS = ['3.15.181.192', '2xangos.com', 'www.2xangos.com', 'ec2-3-15-181-192.us-east-2.compute.amazonaws.com',]
 
 
 # Application definition
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'dosxangos.proyectos',
     'dosxangos.directorio',
     'dosxangos.equipos',
@@ -138,8 +139,6 @@ STATIC_ROOT =  BASE_DIR / 'dosxangos/static'
 SESSION_COOKIE_SECURE = True
 
 CSRF_COOKIE_SECURE = True
-
-SECURE_SSL_REDIRECT = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
